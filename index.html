@@ -1,45 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-<h2>Random Video Call With Girl</h2>
+<title>Free Random Video Chat - Talk to Girls Online</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
-body {font-family: Arial; text-align:center; background:#111; color:white; padding:10px}
-#ad {background:#ff0044; padding:12px; margin:10px 0; border-radius:10px; font-size:18px; font-weight:bold}
-video {width:48%; border-radius:15px; border:2px solid #ff0044; background:black}
-input, button {padding:10px; border-radius:8px; border:none; margin:5px}
-button {background:#ff0044; color:white; font-weight:bold; font-size:16px}
-#myid {color:#00ff88; font-size:20px; font-weight:bold}
+body { margin:0; font-family:Arial; background:linear-gradient(180deg, #8B5CF6 0%, #EC4899 100%); color:white; text-align:center; min-height:100vh; padding:40px 20px;}
+.logo { font-size:45px; font-weight:bold; margin-bottom:5px;}
+h1 { font-size:26px; margin:10px 0;}
+h2 { font-size:16px; font-weight:normal; opacity:0.9; margin-bottom:30px;}
+#startBtn { background:black; color:white; padding:18px 45px; font-size:20px; border:none; border-radius:15px; cursor:pointer; font-weight:bold; box-shadow:0 5px 20px rgba(0,0,0,0.3);}
+#startBtn:hover { transform:scale(1.05); }
+#videoBox { display:none; background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin-top:20px; max-width:800px; margin-left:auto; margin-right:auto;}
+video { width:48%; border-radius:10px; background:black; }
+input { padding:10px; width:60%; border-radius:8px; border:none; margin:10px 0;}
+.btn { padding:10px 20px; background:yellow; color:black; border:none; border-radius:8px; font-weight:bold; cursor:pointer;}
+#supportBox { display:none; background:#FF4757; padding:15px; border-radius:10px; margin-top:15px;}
 </style>
 </head>
 <body>
-<h2>Random Video Call With Girl</h2>
-<div id="ad">Install now - Chat Near & Real Friend</div>
-<div style="background:#ff4757; color:white; padding:15px; text-align:center; margin-top:10px; border-radius:10px;">
-  <h3>❤️ Support Us ❤️</h3>
-  <p>Easypaisa: <b>03466145410</b></p>
-  <p><small>Note: CNIC renew ho raha hai</small></p>
-</div>
+
+<div class="logo">Omegloo</div>
+<h1>CHAT WITH STRANGERS</h1>
+<h2>— NO SIGN UP —</h2>
+
+<button id="startBtn" onclick="startChat()">📹 START CHATTING</button>
+
+<div id="videoBox">
+<h3>Aapki ID: <span id="myid" style="color:yellow;"></span></h3>
+<video id="localVideo" autoplay muted playsinline></video>
+<video id="remoteVideo" autoplay playsinline></video>
+<br>
 <input id="friendid" placeholder="Dost ki ID yahan paste karo">
-<button onclick="call()">Call Karo</button>
-<br><br>
-<video id="myvideo" autoplay muted playsinline></video>
-<video id="hervideo" autoplay playsinline></video>
+<button class="btn" onclick="callFriend()">Call Karo</button>
+
+<div id="supportBox">
+<h3>❤️ Call pasand aayi? Support karein ❤️</h3>
+<button id="showNumberBtn" class="btn">Easypaisa Number Dekho</button>
+<p id="numberBox" style="display:none; font-size:18px; font-weight:bold;">03466145410</p>
+</div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script>
-let stream;
-const peer = new Peer();
-peer.on('open', id => document.getElementById('myid').innerText = id);
-navigator.mediaDevices.getUserMedia({video:true, audio:true})
-.then(s => {stream = s; document.getElementById('myvideo').srcObject = s});
-function call(){
-  const call = peer.call(document.getElementById('friendid').value, stream);
-  call.on('stream', remote => document.getElementById('hervideo').srcObject = remote);
+var peer, localStream;
+
+document.getElementById('showNumberBtn').onclick = function() {
+  document.getElementById('numberBox').style.display = 'block';
+  this.style.display = 'none';
 }
-peer.on('call', call => {
-  call.answer(stream);
-  call.on('stream', remote => document.getElementById('hervideo').srcObject = remote);
-});
+
+function startChat(){
+    document.getElementById('startBtn').style.display='none';
+    document.getElementById('videoBox').style.display='block';
+    
+    var id = Math.random().toString(36).substr(2, 9);
+    document.getElementById('myid').innerText = id;
+    peer = new Peer(id);
+    
+    navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s=>{
+        localStream = s;
+        document.getElementById('localVideo').srcObject = s;
+    });
+    
+    peer.on('call', call => {
+        call.answer(localStream);
+        call.on('stream', remoteStream => {
+            document.getElementById('remoteVideo').srcObject = remoteStream;
+            document.getElementById('supportBox').style.display = 'block';
+        });
+    });
+}
+
+function callFriend(){
+    var friendId = document.getElementById('friendid').value;
+    var call = peer.call(friendId, localStream);
+    call.on('stream', remoteStream => {
+        document.getElementById('remoteVideo').srcObject = remoteStream;
+        document.getElementById('supportBox').style.display = 'block';
+    });
+}
 </script>
 </body>
 </html>
