@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bolen - Live Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+body {font-family: Arial; text-align:center; background:#111; color:white; padding:10px}
+#ad {background:#ff0044; padding:12px; margin:10px 0; border-radius:10px; font-size:18px; font-weight:bold}
+video {width:48%; border-radius:15px; border:2px solid #ff0044; background:black}
+input, button {padding:10px; border-radius:8px; border:none; margin:5px}
+button {background:#ff0044; color:white; font-weight:bold; font-size:16px}
+#myid {color:#00ff88; font-size:20px; font-weight:bold}
+</style>
+</head>
+<body>
+<h2> बोलें - Live Chat </h2>
+<div id="ad">Install now - Chat Near & Real Friend</div>
+<p><b>Tumhari ID:</b> <span id="myid">Loading...</span> </p>
+<input id="friendid" placeholder="Dost ki ID yahan paste karo">
+<button onclick="call()">Call Karo</button>
+<br><br>
+<video id="myvideo" autoplay muted playsinline></video>
+<video id="hervideo" autoplay playsinline></video>
+<script>
+let stream;
+const peer = new Peer();
+peer.on('open', id => document.getElementById('myid').innerText = id);
+navigator.mediaDevices.getUserMedia({video:true, audio:true})
+.then(s => {stream = s; document.getElementById('myvideo').srcObject = s});
+function call(){
+  const call = peer.call(document.getElementById('friendid').value, stream);
+  call.on('stream', remote => document.getElementById('hervideo').srcObject = remote);
+}
+peer.on('call', call => {
+  call.answer(stream);
+  call.on('stream', remote => document.getElementById('hervideo').srcObject = remote);
+});
+</script>
+</body>
+</html>
