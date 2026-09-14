@@ -1,83 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Free Random Video Chat - Talk to Girls Online</title>
+<meta charset="UTF-8">
+<title>Video Call With Girls - Free Random Video Chat No Sign Up</title>
+<meta name="description" content="Free video call with girls online. Talk to strangers with random video chat. No signup, 100% free.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { margin:0; font-family:Arial; background:linear-gradient(180deg, #8B5CF6 0%, #EC4899 100%); color:white; text-align:center; min-height:100vh; padding:40px 20px;}
-.logo { font-size:45px; font-weight:bold; margin-bottom:5px;}
-h1 { font-size:26px; margin:10px 0;}
-h2 { font-size:16px; font-weight:normal; opacity:0.9; margin-bottom:30px;}
-#startBtn { background:black; color:white; padding:18px 45px; font-size:20px; border:none; border-radius:15px; cursor:pointer; font-weight:bold; box-shadow:0 5px 20px rgba(0,0,0,0.3);}
-#startBtn:hover { transform:scale(1.05); }
-#videoBox { display:none; background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin-top:20px; max-width:800px; margin-left:auto; margin-right:auto;}
-video { width:48%; border-radius:10px; background:black; }
-input { padding:10px; width:60%; border-radius:8px; border:none; margin:10px 0;}
-.btn { padding:10px 20px; background:yellow; color:black; border:none; border-radius:8px; font-weight:bold; cursor:pointer;}
-#supportBox { display:none; background:#FF4757; padding:15px; border-radius:10px; margin-top:15px;}
+body { margin:0; font-family:Arial; background: linear-gradient(180deg, #EEC489, #EC4899 100%); color:white; text-align:center; padding:20px; }
+.logo { font-size:40px; font-weight:bold; margin-bottom:5px; }
+h1 { font-size:30px; margin:0; }
+h2 { font-size:16px; font-weight:normal; opacity:0.9; margin-bottom:30px; }
+#startBtn { background:black; color:white; padding:18px 40px; font-size:20px; border:none; border-radius:15px; cursor:pointer; margin-top:20px; }
+#videoBox { display:none; background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin:20px auto; max-width:800px; }
+video { width:48%; border-radius:10px; background:black; margin:5px; }
+#friendId { padding:10px; width:60%; border-radius:5px; border:none; margin:10px 0; }
+.btn { padding:10px 20px; background:yellow; color:black; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+#supportBox { display:none; background:#FFF457; color:black; padding:15px; border-radius:10px; margin-top:15px; }
 </style>
 </head>
 <body>
 
 <div class="logo">Omegloo</div>
-<h1>CHAT WITH STRANGERS</h1>
-<h2>— NO SIGN UP —</h2>
+<h1>Video Call With Girls</h1>
+<h2>Free Random Video Chat - No Sign Up</h2>
 
-<button id="startBtn" onclick="startChat()">📹 START CHATTING</button>
+<button id="startBtn" onclick="startChat()">START CHATTING</button>
 
 <div id="videoBox">
 <h3>Aapki ID: <span id="myid" style="color:yellow;"></span></h3>
 <video id="localVideo" autoplay muted playsinline></video>
 <video id="remoteVideo" autoplay playsinline></video>
 <br>
-<input id="friendid" placeholder="Dost ki ID yahan paste karo">
-<button class="btn" onclick="callFriend()">Call Karo</button>
+<input id="friendId" placeholder="Dost ki ID yahan paste kare">
+<button class="btn" onclick="callFriend()">Call Kare</button>
+</div>
 
 <div id="supportBox">
-<h3>❤️ Call pasand aayi? Support karein ❤️</h3>
-<button id="showNumberBtn" class="btn">Easypaisa Number Dekho</button>
+<h3>Call pasand aayi? Support karein ❤️</h3>
+<button class="btn" onclick="showNumber()">Easypaisa Number Dekho</button>
 <p id="numberBox" style="display:none; font-size:18px; font-weight:bold;">03466145410</p>
-</div>
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script>
 var peer, localStream;
 
-document.getElementById('showNumberBtn').onclick = function() {
-  document.getElementById('numberBox').style.display = 'block';
-  this.style.display = 'none';
+function showNumber() {
+document.getElementById('numberBox').style.display = 'block';
 }
 
-function startChat(){
-    document.getElementById('startBtn').style.display='none';
-    document.getElementById('videoBox').style.display='block';
-    
-    var id = Math.random().toString(36).substr(2, 9);
-    document.getElementById('myid').innerText = id;
-    peer = new Peer(id);
-    
-    navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s=>{
-        localStream = s;
-        document.getElementById('localVideo').srcObject = s;
-    });
-    
-    peer.on('call', call => {
-        call.answer(localStream);
-        call.on('stream', remoteStream => {
-            document.getElementById('remoteVideo').srcObject = remoteStream;
-            document.getElementById('supportBox').style.display = 'block';
-        });
-    });
+function startChat() {
+document.getElementById('startBtn').style.display = 'none';
+document.getElementById('videoBox').style.display = 'block';
+document.getElementById('supportBox').style.display = 'block';
+
+peer = new Peer();
+peer.on('open', function(id) {
+document.getElementById('myid').innerText = id;
+});
+
+navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(function(stream){
+localStream = stream;
+document.getElementById('localVideo').srcObject = stream;
+});
+
+peer.on('call', function(call) {
+call.answer(localStream);
+call.on('stream', function(remoteStream) {
+document.getElementById('remoteVideo').srcObject = remoteStream;
+});
+});
 }
 
-function callFriend(){
-    var friendId = document.getElementById('friendid').value;
-    var call = peer.call(friendId, localStream);
-    call.on('stream', remoteStream => {
-        document.getElementById('remoteVideo').srcObject = remoteStream;
-        document.getElementById('supportBox').style.display = 'block';
-    });
+function callFriend() {
+var friendId = document.getElementById('friendId').value;
+var call = peer.call(friendId, localStream);
+call.on('stream', function(remoteStream) {
+document.getElementById('remoteVideo').srcObject = remoteStream;
+});
 }
 </script>
 </body>
