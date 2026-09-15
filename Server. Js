@@ -1,0 +1,39 @@
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+const path = require('path');
+
+app.use(express.static('.'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+let waitingUser = null;
+io.on('connection', (socket) => {
+  socket.on('findPartner', () => {
+    if (waitingUser) {
+      const partner = waitingUser;
+      waitingUser = null;
+      socket.partner = partner;
+      partner.partner = socket;
+      socket.emit('partnerFound');
+      partner.emit('partnerFound');
+    } else {
+      waitingUser = socket;
+      socket.emit('waiting');
+    }
+  });
+  socket.on('signal', (data) => {
+    if (socket.partner) socket.partner.emit('signal', data);
+  });
+  socket.on('disconnect', () => {
+    if (waitingUser === socket) waitingUser = null;
+    if (socket.partner) {
+      socket.partner.emit('partnerLeft');
+      socket.partner.partner = null;
+    }
+  });
+});
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => console.log(`Server running on ${PORT}`));
